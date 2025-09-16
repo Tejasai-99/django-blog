@@ -1,0 +1,45 @@
+{% extends "basic.html" %}
+
+{% block title %}blogpost{% endblock title %}
+
+{% block body %}
+<div class="container my-3">
+    <div class="blog-post">
+        <h2 class="blog-post-title">
+            {{ post.title }}
+        </h2>
+        <p class="blog-post-meta">
+            {{ post.Timestamp }} by <a href="#">{{ post.author }}</a>
+        </p>
+
+        <p>{{ post.content }}</p>
+        <hr>
+    </div>
+
+    <h4>Comments</h4>
+
+    {% if user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <textarea name="comment" class="form-control" rows="3" placeholder="Add a comment..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+    </form>
+    {% else %}
+    <p>You must <a href="/login/?next=/blog/{{ post.slug }}/">login</a> to comment.</p>
+    {% endif %}
+
+    <hr>
+
+    {% for comment in comments %}
+    <div class="mb-3 p-3 border rounded">
+        <strong>{{ comment.user.username }}</strong>
+        <span class="text-muted">{{ comment.timestamp|date:"M d, Y H:i" }}</span>
+        <p>{{ comment.comment }}</p>
+    </div>
+    {% empty %}
+    <p>No comments yet. Be the first!</p>
+    {% endfor %}
+</div>
+{% endblock body %}
